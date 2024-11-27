@@ -1,13 +1,17 @@
+// Store Search
+
 export async function setup({ onInterfaceReady }) {
     onInterfaceReady(async (ctx) => {
         observeShopPage();
     });
 }
 
+let shopPath = "#shop-container .block.block-rounded.block-link-pop.border-top.border-shop.border-4x"
+
 function observeShopPage() {
     const observer = new MutationObserver((mutations) => {
         for (const mutation of mutations) {
-            const shopContainer = document.querySelector("#horizontal-navigation-shop");
+            const shopContainer = document.querySelector(shopPath);
             if (shopContainer) {
                 if (!document.querySelector("#custom-textbox")) {
                     addTextBox("custom-textbox", filterShopItems, {
@@ -36,8 +40,8 @@ function addTextBox(name, onChange, config) {
     label.htmlFor = name;
     label.textContent = config.label;
 
-    const shopContainer = document.querySelector("#horizontal-navigation-shop");
-    const referenceElement = shopContainer.firstChild;
+    const shopContainer = document.querySelector(shopPath);
+    const referenceElement = shopContainer.children[1];
 
     shopContainer.insertBefore(label, referenceElement);
     shopContainer.insertBefore(input, referenceElement);
@@ -59,4 +63,23 @@ function filterShopItems(event) {
             item.style.display = "none";
         }
     });
+    hideEmptyBlocks()
+}
+
+function hideEmptyBlocks(){
+    let blocks = document.querySelector("#shop-container #new-shop").children;
+    blocks.forEach(block => {
+        let items = block.querySelector(".p-3 .row.gutters-tiny.row-deck").children;
+        let count = 0;
+        items.forEach((item) => {
+            if(item.style.display !== "none") {
+                count++
+            }
+        })
+        if(count === 0) {
+            block.style.display = "none"
+        }else{
+            block.style.display = ""
+        }
+    })
 }
